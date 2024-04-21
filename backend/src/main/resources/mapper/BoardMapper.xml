@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="lab.labprj.mapper.BoardMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="bno">
+        insert into board(title, content, email, writer)
+        values (#{title}, #{content}, #{member.email}, #{member.nickname})
+    </insert>
+
+    <resultMap id="BoardMap" type="Board">
+        <id property="bno" column="bno"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="writer" column="writer"/>
+        <result property="regTime" column="reg_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="member" column="email" resultMap="MemberMap"/>
+    </resultMap>
+
+    <resultMap id="MemberMap" type="Member">
+        <id property="email" column="email"/>
+        <result property="pw" column="pw"/>
+        <result property="nickname" column="nickname"/>
+    </resultMap>
+
+    <select id="findByBno" resultMap="BoardMap">
+        select b.bno, b.title, b.content, b.writer, b.reg_time, b.update_time, m.nickname
+        from board b
+        left join member m on b.email = m.email
+        where b.bno = #{bno}
+    </select>
+
+    <!-- 지연로딩 적용 / fail
+    <resultMap id="BoardMap" type="Board">
+        <id property="bno" column="bno"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="writer" column="writer"/>
+        <result property="regTime" column="reg_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="member" column="email" select="lazySelectMember" fetchType="lazy"/>
+    </resultMap>
+
+    <select id="findByBno" resultMap="BoardMap">
+        select * from board
+        where bno = #{bno}
+    </select>
+
+    <select id="lazySelectMember" resultType="Member">
+        select m.*
+        from member m
+        left join board b on m.nickname = b.writer
+        where b.bno = #{bno}
+    </select>
+    -->
+
+
+
+
+
+</mapper>

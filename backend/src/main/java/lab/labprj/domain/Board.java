@@ -1,5 +1,6 @@
 package lab.labprj.domain;
 
+import lab.labprj.dto.BoardDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,10 +30,25 @@ public class Board {
     }
 
     @Builder
-    public Board(String title, String content, Member member) {
+    public Board(String title, String content, Member member, String writer) {
         this.title = title;
         this.content = content;
         this.member = member;
+        this.writer = writer;
+    }
+
+    public BoardDTO toDTO(Board board){
+        BoardDTO boardDTO = BoardDTO.builder()
+                .bno(board.bno)
+                .title(board.title)
+                .content(board.content)
+                .email(board.getMember().getEmail())
+                .writer(board.writer)
+                .regTime(board.regTime)
+                .updateTime(board.updateTime)
+                .build();
+
+        return boardDTO;
     }
 
 }

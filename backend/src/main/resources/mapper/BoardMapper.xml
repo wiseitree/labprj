@@ -9,23 +9,23 @@
         values (#{title}, #{content}, #{member.email}, #{member.nickname})
     </insert>
 
-    <resultMap id="BoardMap" type="Board">
+    <resultMap id="boardMap" type="Board">
         <id property="bno" column="bno"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>
         <result property="writer" column="writer"/>
         <result property="regTime" column="reg_time"/>
         <result property="updateTime" column="update_time"/>
-        <association property="member" column="email" resultMap="MemberMap"/>
+        <association property="member" column="email" resultMap="memberMap"/>
     </resultMap>
 
-    <resultMap id="MemberMap" type="Member">
+    <resultMap id="memberMap" type="Member">
         <id property="email" column="email"/>
         <result property="pw" column="pw"/>
         <result property="nickname" column="nickname"/>
     </resultMap>
 
-    <select id="findByBno" resultMap="BoardMap">
+    <select id="findByBno" resultMap="boardMap">
         select b.bno, b.title, b.content, b.writer, b.reg_time, b.update_time, m.nickname
         from board b
         left join member m on b.email = m.email
@@ -55,6 +55,35 @@
         where b.bno = #{bno}
     </select>
     -->
+
+    <select id="findBoardList" resultMap="boardMap">
+        select b.bno, b.title, b.content, b.email, b.writer, b.reg_time, b.update_time, m.nickname
+        from board b
+        left join member m on b.email = m.email
+        <where>
+            <if test="boardSearchDTO.title != null and boardSearchDTO.title != ''">
+                or b.title like concat('%', #{boardSearchDTO.keyword}, '%')
+            </if>
+            <if test="boardSearchDTO.content != null and boardSearchDTO.content != ''">
+                or b.content like concat('%', #{boardSearchDTO.keyword}, '%')
+            </if>
+        </where>
+        order by b.reg_time desc , b.bno desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(*)
+        from board
+        <where>
+            <if test="title != null and title != ''">
+                or title like concat('%', #{keyword}, '%')
+            </if>
+            <if test="content != null and content != ''">
+                or content like concat('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
 
 
 

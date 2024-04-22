@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { postAdd } from '../../api/boardApi';
 import useCustomMove from '../../hooks/useCustomMove';
 
@@ -7,10 +7,12 @@ const initState = {
     content: '',
     email: 'user1@aaa.com',
     writer: '',
+    files: [],
 };
 
 const AddComponent = () => {
     const [board, setBoard] = useState({ ...initState });
+    const uploadRef = useRef()
 
     const { moveToList } = useCustomMove();
 
@@ -22,6 +24,21 @@ const AddComponent = () => {
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') handleClickAdd();
     };
+
+    const handleClickAddTest = (e) => {
+        const files = uploadRef.current.files;
+        const formData = new FormData();
+
+        for (let i = 0; i < files.length; i++){
+            formData.append("files", files[i]);
+        }
+
+        //other data
+        formData.append("title", board.title)
+        formData.append("content", board.content)
+
+        console.log("formData = " , formData);
+    }
 
     const handleClickAdd = (board) => {
         postAdd(board)
@@ -51,6 +68,17 @@ const AddComponent = () => {
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+            <div className="flex justify-center">
+                <div className="relative mb-4 flex w-full flex-wrap items-stretch">
+                    <div className="w-1/5 p-6 text-right font-bold">Files</div>
+                    <input ref={uploadRef}
+                           className="w-4/5 p-6 rounded-r border border-solid border-neutral-300 shadow-md"
+                           type={'file'} multiple={true}
+                    >
+                    </input>
+                </div>
+            </div>
+
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">제목</div>
@@ -97,7 +125,8 @@ const AddComponent = () => {
                 <button
                     type="button"
                     className="rounded p-4  w-36 bg-blue-500 text-xl  text-white hover:bg-blue-800"
-                    onClick={() => handleClickAdd(board)}
+                    // onClick={() => handleClickAdd(board)}
+                    onClick={handleClickAddTest}
                 >
                     등록
                 </button>

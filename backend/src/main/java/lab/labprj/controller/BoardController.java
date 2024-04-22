@@ -6,13 +6,16 @@ import lab.labprj.dto.BoardSearchDTO;
 import lab.labprj.dto.page.PageRequestDTO;
 import lab.labprj.dto.page.PageResponseDTO;
 import lab.labprj.service.BoardService;
+import lab.labprj.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/api/board")
 public class BoardController {
 
+    private final CustomFileUtil fileUtil;
     private final BoardService boardService;
 
     @GetMapping("/{bno}")
@@ -38,7 +42,7 @@ public class BoardController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> register(@Valid @RequestBody BoardDTO boardDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> register(@Valid  BoardDTO boardDTO, BindingResult bindingResult) {
         Map<String, String> result = new HashMap<>();
 
         if (bindingResult.hasErrors()) {
@@ -46,8 +50,15 @@ public class BoardController {
             return ResponseEntity.badRequest().body(result);
         }
 
-        Long bno = boardService.register(boardDTO);
-        result.put("bno", bno.toString());
+        log.info("#####BoardController - /api/board/register - BoardDTO {}", boardDTO);
+        List<MultipartFile> files = boardDTO.getFiles();
+        List<String> uploadFileNames = fileUtil.saveFiles(files);
+        boardDTO.setUploadFileNames(uploadFileNames);
+        log.info("#####BoardController - /api/board/register - uploadFileNames {}", uploadFileNames);
+        result.put("result", "success");
+
+//        Long bno = boardService.register(boardDTO);
+//        result.put("bno", bno.toString());
 //        Map<String, Long> map = Map.of("bno", bno);
         return ResponseEntity.ok(result);
 

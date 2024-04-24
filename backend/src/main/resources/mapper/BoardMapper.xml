@@ -9,6 +9,13 @@
         values (#{title}, #{content}, #{member.email}, #{member.nickname})
     </insert>
 
+    <insert id="saveBoardImage" parameterType="Board">
+        insert into board_image(board_bno, file_name, ord) values
+        <foreach collection="imageList" item="image" separator=",">
+            (#{bno}, #{image.fileName}, #{image.ord})
+        </foreach>
+    </insert>
+
     <resultMap id="boardMap" type="Board">
         <id property="bno" column="bno"/>
         <result property="title" column="title"/>
@@ -17,6 +24,7 @@
         <result property="regTime" column="reg_time"/>
         <result property="updateTime" column="update_time"/>
         <association property="member" column="email" resultMap="memberMap"/>
+        <collection property="imageList" ofType="BoardImage" resultMap="boardImageMap"/>
     </resultMap>
 
     <resultMap id="memberMap" type="Member">
@@ -25,12 +33,38 @@
         <result property="nickname" column="nickname"/>
     </resultMap>
 
+    <resultMap id="boardImageMap" type="BoardImage">
+        <result property="fileName" column="file_name"/>
+        <result property="ord" column="ord"/>
+    </resultMap>
+
     <select id="findByBno" resultMap="boardMap">
-        select b.bno, b.title, b.content, b.writer, b.reg_time, b.update_time, m.nickname
+        select b.bno, b.title, b.content, b.writer, b.reg_time, b.update_time, m.nickname, bi.file_name, bi.ord
         from board b
         left join member m on b.email = m.email
+        left join board_image bi on b.bno = bi.board_bno
         where b.bno = #{bno}
     </select>
+
+    <update id="update">
+        update board
+        set title = #{boardDTO.title},
+            content = #{boardDTO.content},
+            update_time = #{boardDTO.updateTime}
+        where bno = #{bno}
+    </update>
+
+    <delete id="deleteByBno">
+        delete
+        from board
+        where bno = #{bno}
+    </delete>
+
+    <delete id="deleteBoardImage">
+        delete
+        from board_image
+        where board_bno = #{bno}
+    </delete>
 
     <!-- 지연로딩 적용 / fail
     <resultMap id="BoardMap" type="Board">
@@ -57,9 +91,10 @@
     -->
 
     <select id="findBoardList" resultMap="boardMap">
-        select b.bno, b.title, b.content, b.email, b.writer, b.reg_time, b.update_time, m.nickname
+        select b.bno, b.title, b.content, b.email, b.writer, b.reg_time, b.update_time, m.nickname, bi.file_name, bi.ord
         from board b
         left join member m on b.email = m.email
+        left join board_image bi on b.bno = bi.board_bno
         <where>
             <if test="boardSearchDTO.title != null and boardSearchDTO.title != ''">
                 or b.title like concat('%', #{boardSearchDTO.keyword}, '%')

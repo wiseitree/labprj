@@ -14,6 +14,10 @@ public interface BoardService {
 
     BoardDTO getBoardDtl(Long bno);
 
+    void modify(Long bno, BoardDTO boardDTO);
+
+    void remove(Long bno);
+
     PageResponseDTO<BoardDTO> getPageResponse(PageRequestDTO pageRequestDTO, BoardSearchDTO boardSearchDTO);
 
 }

@@ -2,6 +2,7 @@ package lab.labprj.repository;
 
 import lab.labprj.domain.Board;
 import lab.labprj.domain.Member;
+import lab.labprj.dto.BoardDTO;
 import lab.labprj.dto.BoardSearchDTO;
 import lab.labprj.mapper.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,22 @@ public class BoardRepository {
     public Optional<Board> findByBno(Long bno){
         Optional<Board> optionalBoard = boardMapper.findByBno(bno);
         return optionalBoard;
+    }
+
+    public void update(Long bno, BoardDTO boardDTO){
+        boardMapper.update(bno, boardDTO);
+    }
+
+    public void deleteByBno(Long bno){
+        boardMapper.deleteByBno(bno);
+    }
+
+    public void saveBoardImage(Board board){
+        boardMapper.saveBoardImage(board);
+    }
+
+    public void deleteBoardImage(Long bno){
+        boardMapper.deleteBoardImage(bno);
     }
 
     public List<Board> findBoardList(int offset, int limit, BoardSearchDTO boardSearchDTO){

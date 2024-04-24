@@ -2,6 +2,7 @@ package lab.labprj.mapper;
 
 import lab.labprj.domain.Board;
 import lab.labprj.domain.Member;
+import lab.labprj.dto.BoardDTO;
 import lab.labprj.dto.BoardSearchDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,15 @@ public interface BoardMapper {
 
     void save(Board board);
 
+    void saveBoardImage(Board board);
+
     Optional<Board> findByBno(Long bno);
+
+    void update(@Param("bno") Long bno, @Param("boardDTO") BoardDTO boardDTO);
+
+    void deleteByBno(Long bno);
+
+    void deleteBoardImage(Long bno);
 
     List<Board> findBoardList(@Param("offset") int offset, @Param("limit") int limit, @Param("boardSearchDTO")
     BoardSearchDTO boardSearchDTO);

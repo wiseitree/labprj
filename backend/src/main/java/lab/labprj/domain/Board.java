@@ -10,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-@ToString
+@ToString/*(exclude = "imageList")*/
 @NoArgsConstructor
 public class Board {
 
@@ -24,6 +26,25 @@ public class Board {
     private String writer;
     private LocalDateTime regTime;
     private LocalDateTime updateTime;
+    private List<BoardImage> imageList = new ArrayList<>();
+
+    public void addImage(BoardImage image){
+        image.setOrd(this.imageList.size());
+        imageList.add(image);
+    }
+
+    public void addImageString(String fileName){
+        BoardImage boardImage = BoardImage.builder()
+                .fileName(fileName)
+                .build();
+
+        addImage(boardImage);
+    }
+
+    public void clearList(){
+        this.imageList.clear();
+    }
+
 
     public void method(){
         log.info("#################### Board.method() is called ####################");

@@ -32,6 +32,7 @@ public class BoardDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime updateTime;
 
+
     private List<MultipartFile> files = new ArrayList<>();
     private List<String> uploadFileNames = new ArrayList<>();
 

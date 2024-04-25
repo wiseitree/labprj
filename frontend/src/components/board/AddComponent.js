@@ -1,18 +1,24 @@
 import { useRef, useState } from 'react';
 import { postAdd } from '../../api/boardApi';
 import useCustomMove from '../../hooks/useCustomMove';
+import FetchingModal from "../common/FetchingModal";
+import ResultModal from "../common/ResultModal";
 
 const initState = {
     title: '',
     content: '',
     email: 'user1@aaa.com',
-    writer: '',
+    writer: 'user1',
     files: [],
 };
+
 
 const AddComponent = () => {
     const [board, setBoard] = useState({ ...initState });
     const uploadRef = useRef()
+
+    const [fetching, setFetching] = useState(false)
+    const [result, setResult] = useState(null)
 
     const { moveToList } = useCustomMove();
 
@@ -25,7 +31,7 @@ const AddComponent = () => {
         if (e.key === 'Enter') handleClickAdd();
     };
 
-    const handleClickAddTest = (e) => {
+    const handleClickAdd = (e) => {
         const files = uploadRef.current.files;
         const formData = new FormData();
 
@@ -33,22 +39,25 @@ const AddComponent = () => {
             formData.append("files", files[i]);
         }
 
-        //other data
         formData.append("title", board.title)
         formData.append("content", board.content)
+        formData.append("email", board.email)
+        formData.append("writer", board.writer)
 
-        console.log("formData = " , formData);
-    }
+        console.log(formData);
+        setFetching(true)
 
-    const handleClickAdd = (board) => {
-        postAdd(board)
-            .then((result) => {
-                moveToList();
-            })
-            .catch((e) => {
-                alert('제목 및 내용을 올바르게 입력 해 주세요.');
-            });
+        postAdd(formData).then(data => {
+            setFetching(false);
+            setResult(data.result)
+        })
+
     };
+
+    const closeModal = () => {
+        setResult(null)
+        moveToList({page:1})
+    }
 
     const calcContentLen = (data) => {
         let curDataLen = '';
@@ -68,6 +77,18 @@ const AddComponent = () => {
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+
+            {fetching ? <FetchingModal/> : <></>}
+
+            {result?
+                <ResultModal
+                    title = {'Board Add Result'}
+                    content={`${result}번 등록 완료`}
+                    callbackFn={closeModal}
+                    />
+                :<></>
+            }
+
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">Files</div>
@@ -126,7 +147,7 @@ const AddComponent = () => {
                     type="button"
                     className="rounded p-4  w-36 bg-blue-500 text-xl  text-white hover:bg-blue-800"
                     // onClick={() => handleClickAdd(board)}
-                    onClick={handleClickAddTest}
+                    onClick={handleClickAdd}
                 >
                     등록
                 </button>

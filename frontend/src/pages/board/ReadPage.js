@@ -3,7 +3,7 @@ import ReadComponent from "../../components/board/ReadComponent";
 
 const ReadPage = () => {
     const {bno} = useParams();
-    console.log("ReadPage ------");
+
 
     return (
         <div className=" w-full bg-white mt-6">

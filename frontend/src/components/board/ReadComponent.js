@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import useCustomMove from '../../hooks/useCustomMove';
-import { getOne } from '../../api/boardApi';
+import {API_SERVER_HOST, getOne} from '../../api/boardApi';
+import FetchingModal from "../common/FetchingModal";
 
 
 const initState = {
@@ -11,6 +12,7 @@ const initState = {
     regTime: null,
     updateTime: null,
     email: '',
+    uploadFileNames:[],
 };
 
 const modalState = {
@@ -18,20 +20,30 @@ const modalState = {
     content: '',
 };
 
+const host = API_SERVER_HOST
+
 const ReadComponent = ({bno}) => {
     const [board, setBoard] = useState(initState);
-    const { moveToRead, moveToList } = useCustomMove();
+    const { moveToRead, moveToList, moveToModify } = useCustomMove();
     const [result, setResult] = useState('');
+    const [fetching, setFetching] = useState(false)
+    console.log("ReadComponent board = ", board);
 
     useEffect(() => {
+        setFetching(true)
+
         getOne(bno)
             .then((data) => {
                 setBoard(data);
+                setFetching(false)
             });
     }, [bno]);
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4 ">
+
+            {fetching ? <FetchingModal/> : <></>}
+
             {/* buttons..........start */}
             <div className="flex justify-end p-4">
                 <button
@@ -44,6 +56,7 @@ const ReadComponent = ({bno}) => {
                 <button
                     type="button"
                     className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500 hover:bg-blue-800"
+
                 >
                     수정
                 </button>

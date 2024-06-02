@@ -11,8 +11,8 @@ export const getOne = async (bno) => {
 };
 
 export const getList = async (pageParam, searchParam) => {
-    const { page, size } = pageParam;
-    const { title, content, keyword } = searchParam;
+    const {page, size} = pageParam;
+    const {title, content, keyword} = searchParam;
     const res = await axios.get(`${host}/list`, {
         params: {
             page: page,
@@ -31,3 +31,13 @@ export const postAdd = async (boardObj) => {
     const res = await axios.post(`${host}/`, boardObj, header);
     return res.data;
 };
+
+export const downloadOne = async (fileName) => {
+    const res = await axios.get(`${host}/download`, {
+        params: {
+            fileName: fileName,
+        },
+        responseType: 'blob',
+    });
+    return res.data;
+}

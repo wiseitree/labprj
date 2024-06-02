@@ -134,8 +134,6 @@ class BoardRepositoryTest {
 
         //then
 
-
-
     }
 
     @Test

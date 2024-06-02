@@ -5,6 +5,7 @@ const Loading = <div>Loading....</div>;
 const BoardList = lazy(() => import('../pages/board/ListPage'));
 const BoardRead = lazy(() => import('../pages/board/ReadPage'));
 const BoardAdd = lazy(() => import('../pages/board/AddPage'));
+
 const boardRouter = () => {
     return [
         {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useCustomMove from '../../hooks/useCustomMove';
-import {API_SERVER_HOST, getOne} from '../../api/boardApi';
+import {API_SERVER_HOST, downloadOne, getOne} from '../../api/boardApi';
 import FetchingModal from "../common/FetchingModal";
 
 
@@ -26,7 +26,7 @@ const ReadComponent = ({bno}) => {
     const [board, setBoard] = useState(initState);
     const { moveToRead, moveToList, moveToModify } = useCustomMove();
     const [result, setResult] = useState('');
-    const [fetching, setFetching] = useState(false)
+    const [fetching, setFetching] = useState(false);
     console.log("ReadComponent board = ", board);
 
     useEffect(() => {
@@ -39,6 +39,21 @@ const ReadComponent = ({bno}) => {
             });
     }, [bno]);
 
+
+    const handleClickDownload = () => {
+        const fileName = "카페미뇽.jpg";
+        downloadOne(fileName)
+            .then((data) => {
+                const blob = new Blob([data]);
+                const fileUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.setAttribute('download', "apple12345");
+                link.click();
+                link.remove();
+            })
+    }
+
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4 ">
 
@@ -49,7 +64,8 @@ const ReadComponent = ({bno}) => {
                 <button
                     type="button"
                     className="rounded p-4 m-2 text-xl w-32 text-white bg-blue-500 hover:bg-blue-800"
-                    onClick={() => moveToList()}
+                    /*onClick={() => moveToList()}*/
+                    onClick={() => handleClickDownload()}
                 >
                     목록
                 </button>

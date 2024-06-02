@@ -7,13 +7,17 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -113,5 +117,35 @@ public class CustomFileUtil {
             }
         });
     }
+
+    public ResponseEntity<Resource> downloadFile(String fileName) throws MalformedURLException {
+//        Resource resource = new FileSystemResource(uploadPath + File.separator + "okestro.jpg");
+        UrlResource resource = new UrlResource("file:" + uploadPath + File.separator + fileName);
+
+        log.info("resource = " + resource);
+
+        String resourceFilename = resource.getFilename();
+        log.info("resourceFilename = " + resourceFilename);
+
+        String encodedFileName = UriUtils.encode(resourceFilename, StandardCharsets.UTF_8);
+        log.info("encodedFileName = " + encodedFileName);
+
+//        String orgFileName = encodedFileName.substring(37);
+
+/*        HttpHeaders headers = new HttpHeaders();
+        try{
+            headers.add("Content-Disposition", "attachment; filename=\"" + new String(resourceFilename.getBytes("UTF-8"),
+                    "ISO-8859-1"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();*/
+
+        String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"";
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(resource);
+    }
+
 
 }

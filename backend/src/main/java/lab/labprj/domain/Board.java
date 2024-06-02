@@ -17,8 +17,6 @@ import java.util.List;
 @ToString/*(exclude = "imageList")*/
 @NoArgsConstructor
 public class Board {
-
-    private static final Logger log = LoggerFactory.getLogger(Board.class);
     private Long bno;
     private String title;
     private String content;
@@ -45,10 +43,6 @@ public class Board {
         this.imageList.clear();
     }
 
-
-    public void method(){
-        log.info("#################### Board.method() is called ####################");
-    }
 
     @Builder
     public Board(String title, String content, Member member, String writer) {

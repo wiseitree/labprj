@@ -49,7 +49,7 @@ class BoardServiceTest {
 
         //then
         Board board = boardRepository.findByBno(bno).get();
-        log.info("board = {} ", board );
+        log.info("board = {} ", board);
     }
 
     @Test

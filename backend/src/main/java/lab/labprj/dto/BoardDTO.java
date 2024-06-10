@@ -47,6 +47,7 @@ public class BoardDTO {
         this.updateTime = updateTime;
     }
 
+
     public Board toEntity(BoardDTO boardDTO, Member member){
         Board board = Board.builder()
                 .title(boardDTO.getTitle())

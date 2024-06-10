@@ -7,8 +7,8 @@ const TempComponent = () => {
     }
 
 
-
     printNumber(num);
+
 
     return (
         <>
